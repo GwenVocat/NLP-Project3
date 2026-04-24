@@ -1,0 +1,16 @@
+sentence_id,ipa_word,hd_ground_truth,auto_mapping,auto_correct,skipped
+0,gas,Das,–,False,False
+0,bədyːtə,bedeutet,–,False,False
+0,fyːrøːz,für uns,–,False,False
+0,aɪnɛɾzaɪts,einerseits,–,False,False
+0,gloːvɑː,die LOVA,–,False,False
+0,mɪt,mit,mit,True,False
+0,alnə,allen,–,False,False
+0,eːrɪʃpaɾmɑːs,ihren Sparmassnahmen,–,False,False
+0,nɑːmə,nahmen,–,False,False
+0,frɑːts,voran,–,False,False
+0,tɾɛbə,zutreiben,–,False,False
+1,fɔːgslaːkɛː,Vorgeschlagen,–,False,False
+1,ɪstə,ist,–,False,False
+1,ʃtɛfɑːn,Stefan,–,False,False
+1,tsuːblɔː,Zubler,–,False,False

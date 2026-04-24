@@ -1,0 +1,19 @@
+# Daten
+*.tsv
+*.tar
+Data/clips__test/
+
+# Audio
+*.mp3
+*.wav
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Claude
+.claude/

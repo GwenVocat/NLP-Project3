@@ -1,0 +1,17 @@
+pandas
+numpy
+librosa
+transformers
+torch
+torchaudio
+scikit-learn
+matplotlib
+wordcloud
+accelerate
+safetensors
+phonemizer
+protobuf
+python-Levenshtein
+jupyter
+scipy
+Levenshtein
