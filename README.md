@@ -25,6 +25,61 @@ annotate.py           Manuelle Ground-Truth-Annotation (Terminal)
 
 ---
 
+## IPA-Ausspracheführer
+
+Kurze Referenz der häufigsten IPA-Zeichen im Schweizerdeutschen/Deutschen:
+
+### Konsonanten
+
+| Zeichen | Aussprache | Beispiel |
+|---|---|---|
+| `ʃ` | **sch** | **Sch**ule, **sch**ön |
+| `ʒ` | weiches **sch** (wie frz. *j*) | Gara**g**e, Genie |
+| `ç` | **ch** nach hellen Vokalen (i, e, ä) | i**ch**, rei**ch** |
+| `x` | **ch** nach dunklen Vokalen (a, o, u) | Ba**ch**, Bu**ch** |
+| `ŋ` | **ng** | si**ng**en, la**ng** |
+| `ts` | **z** | **Z**eit, Pflan**z**e |
+| `tʃ` | **tsch** | Deu**tsch**, **tsch**üss |
+| `dʒ` | weiches **dsch** | **Dsch**ungel |
+| `ʁ` / `r` | **r** (uvular oder gerollt) | **R**egen, Fah**r**t |
+| `j` | **j** | **j**a, **J**ahr |
+| `v` | **w** | **W**asser, **w**enn |
+| `β` | stimmhaftes b/v (zwischen b und w) | — |
+| `ʔ` | Knacklaut (Glottalstop) | be**-**achten |
+
+### Vokale
+
+| Zeichen | Aussprache | Beispiel |
+|---|---|---|
+| `iː` | langes **ie** | L**ie**be |
+| `ɪ` | kurzes **i** | m**i**t, b**i**tte |
+| `uː` | langes **u** | **U**hr |
+| `ʊ` | kurzes **u** | M**u**tter, H**u**nd |
+| `eː` | langes **e** | **E**he, s**ee** |
+| `ɛ` | kurzes **e** / **ä** | B**e**tt, H**ä**nde |
+| `aː` | langes **a** | V**a**ter |
+| `a` | kurzes **a** | St**a**dt |
+| `oː` | langes **o** | **O**hr, gr**o**ß |
+| `ɔ` | kurzes **o** | S**o**nne |
+| `øː` | langes **ö** | h**ö**ren, sch**ö**n |
+| `œ` | kurzes **ö** | H**ö**lle, zwölf |
+| `yː` | langes **ü** | **ü**ber |
+| `ʏ` | kurzes **ü** | h**ü**bsch, fünf |
+| `ə` | **Schwa** – unbetontes e | bitt**e**, hab**e** |
+| `ɐ` | abgeschwächtes **a/er** | bess**er**, üb**er** |
+
+### Diakritika & Marker
+
+| Zeichen | Bedeutung |
+|---|---|
+| `ˈ` | Hauptbetonung (folgende Silbe ist betont) |
+| `ˌ` | Nebenbetonung |
+| `ː` | Längezeichen (langer Vokal/Konsonant) |
+
+> **Hinweis:** In diesem Projekt werden Stressmarker (`ˈ ˌ`) durch `clean.py` entfernt.
+
+---
+
 ## Daten
 
 | Datei | Inhalt |

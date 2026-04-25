@@ -1,17 +1,27 @@
-pandas
-numpy
-librosa
-transformers
+# Audio & ML
 torch
 torchaudio
-scikit-learn
-matplotlib
-wordcloud
+librosa
+transformers
 accelerate
 safetensors
+
+# IPA / Phonemisierung
 phonemizer
-protobuf
+
+# Datenverarbeitung
+pandas
+numpy
+openpyxl
+num2words
+
+# Analyse & Visualisierung
+matplotlib
+wordcloud
 python-Levenshtein
+
+# Protobuf (transformers-Abhängigkeit)
+protobuf
+
+# Notebooks
 jupyter
-scipy
-Levenshtein

@@ -8,7 +8,7 @@ import sys
 
 import pandas as pd
 
-TRANSCRIPTIONS = "Data/transcriptions_clean.csv"
+TRANSCRIPTIONS = "Data/transcriptions_normalized.csv"
 MAPPING        = "Data/ostschweiz_mapping_results.csv"
 SENTENCES_FILE = "Data/annotation_sentences.csv"
 RESULTS_FILE   = "Data/annotation_results.csv"
@@ -27,9 +27,39 @@ SEP = "━" * 50
 
 def setup():
     if not os.path.exists(SENTENCES_FILE):
-        df     = pd.read_csv(TRANSCRIPTIONS)
-        n      = min(SAMPLE_SIZE, len(df))
-        sample = df.sample(n=n, random_state=RANDOM_STATE).reset_index(drop=True)
+        df      = pd.read_csv(TRANSCRIPTIONS)
+        mapping = pd.read_csv(MAPPING)
+
+        # 1. HD-Worthäufigkeit aus "sentence"-Spalte
+        hd_counts = (
+            df["sentence"]
+            .dropna()
+            .str.lower()
+            .str.split()
+            .explode()
+            .value_counts()
+        )
+        target_hd = set(hd_counts[hd_counts.between(50, 300)].index)
+        print(f"  {len(target_hd)} Ziel-HD-Wörter mit Häufigkeit 50–300 gefunden")
+
+        # 2. Mapping umkehren: HD → IPA (ein HD-Wort → mehrere IPA-Tokens möglich)
+        hd_to_ipa = mapping.groupby(
+            mapping["Hochdeutsch_Zuordnung"].str.lower()
+        )["IPA_Dialekt"].apply(set)
+        target_ipa = set().union(
+            *(hd_to_ipa[w] for w in target_hd if w in hd_to_ipa)
+        )
+        print(f"  {len(target_ipa)} IPA-Tokens diesen HD-Wörtern zugeordnet")
+
+        # 3. Sätze filtern, die mindestens ein Ziel-IPA-Token enthalten
+        mask = df["ipa_audio"].apply(
+            lambda x: not pd.isna(x) and bool(set(str(x).split()) & target_ipa)
+        )
+        candidates = df[mask]
+        print(f"  {len(candidates)} Sätze enthalten mindestens ein Ziel-IPA-Token")
+
+        n      = min(SAMPLE_SIZE, len(candidates))
+        sample = candidates.sample(n=n, random_state=RANDOM_STATE).reset_index(drop=True)
         sample.index.name = "sentence_id"
         sample.to_csv(SENTENCES_FILE)
         print(f"  {n} Sätze gesampelt  →  {SENTENCES_FILE}")
@@ -73,6 +103,16 @@ def _write_result(sentence_id, ipa_word, hd_ground_truth, auto_mapping,
         })
 
 
+def _undo_last_result() -> bool:
+    with open(RESULTS_FILE, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    if len(lines) <= 1:
+        return False
+    with open(RESULTS_FILE, "w", encoding="utf-8") as f:
+        f.writelines(lines[:-1])
+    return True
+
+
 # ── Core annotation ───────────────────────────────────────────────────────────
 
 def annotate_sentence(sentence_id: int, row: pd.Series, auto_map: dict,
@@ -97,12 +137,16 @@ def annotate_sentence(sentence_id: int, row: pd.Series, auto_map: dict,
     annotated     = 0
     skipped_words = 0
     sentence_skip = False
+    last_action   = None  # "annotated" | "skipped"
 
-    for i, token in enumerate(tokens, start=1):
+    i = 0
+    while i < n:
+        token      = tokens[i]
         suggestion = auto_map.get(token, "–")
-        print(f"\nWort {i}/{n}:  {token}   [auto: {suggestion}]", end="  ")
-        print("(Enter=auto | text=HD | s=skip | ss=Satz skip | q=quit)")
+        print(f"\nWort {i+1}/{n}:  {token}   [auto: {suggestion}]", end="  ")
+        print("(Enter=auto | text=HD | s=skip | ss=Satz skip | u=zurück+undo | d=undo | q=quit)")
 
+        redo = False
         while True:
             try:
                 raw = input("> ").strip()
@@ -116,21 +160,58 @@ def annotate_sentence(sentence_id: int, row: pd.Series, auto_map: dict,
             elif raw == "ss":
                 sentence_skip = True
                 break
+            elif raw == "d":
+                if last_action is not None:
+                    if _undo_last_result():
+                        if last_action == "annotated":
+                            annotated -= 1
+                        else:
+                            skipped_words -= 1
+                        last_action = None
+                        print("  ✗ Aktueller Eintrag gelöscht")
+                    else:
+                        print("  Keine Einträge zum Löschen.")
+                else:
+                    print("  Kein Eintrag zum Löschen.")
+                redo = True
+                break
+            elif raw == "u":
+                if i > 0 and last_action is not None:
+                    if _undo_last_result():
+                        if last_action == "annotated":
+                            annotated -= 1
+                        else:
+                            skipped_words -= 1
+                        last_action = None
+                        i -= 1
+                        print("  ↩ Letzte Eingabe gelöscht")
+                    else:
+                        print("  Keine Einträge zum Rückgängigmachen.")
+                else:
+                    print("  Keine vorherige Eingabe in diesem Satz.")
+                redo = True
+                break
             elif raw == "s":
                 _write_result(sentence_id, token, "", suggestion, False, True)
                 skipped_words += 1
+                last_action = "skipped"
                 break
             elif raw == "":
                 _write_result(sentence_id, token, suggestion, suggestion, True, False)
                 annotated += 1
+                last_action = "annotated"
                 break
             else:
                 _write_result(sentence_id, token, raw, suggestion, False, False)
                 annotated += 1
+                last_action = "annotated"
                 break
 
         if sentence_skip:
             break
+
+        if not redo:
+            i += 1
 
     done = _load_done()
     done.add(sentence_id)
@@ -163,7 +244,7 @@ def main():
 
     already_done = total - len(remaining)
     print(f"Fortschritt: {already_done}/{total} Sätze fertig – {len(remaining)} verbleibend")
-    print("Befehle: Enter=Auto | text=eigene HD | s=Wort skip | ss=Satz skip | q=beenden\n")
+    print("Befehle: Enter=Auto | text=eigene HD | s=Wort skip | ss=Satz skip | d=undo | u=zurück+undo | q=beenden\n")
 
     for pos, sentence_id in enumerate(remaining):
         display_num = already_done + pos + 1
