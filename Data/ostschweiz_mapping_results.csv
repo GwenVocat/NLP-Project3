@@ -1,51 +1,24 @@
-IPA_Dialekt,Hochdeutsch_Zuordnung,Gemeinsame_Treffer
-diː,die,202
-ɪn,der,103
-dɛɾ,der,151
-ɛs,es,112
-ʊnt,und,152
-ɪç,ich,70
-ɪm,im,85
-fyːɾ,für,89
-hɛt,hat,46
-dɛs,der,39
-ɪs,der,31
-zɪç,sich,73
-deː,der,51
-ɛɾ,er,30
-ɛn,ist,21
-das,das,47
-dɛn,der,31
-fɔm,des,30
-mɪt,mit,46
-fɔɾ,der,35
-fɔn,der,28
-zɪnt,sind,35
-als,als,47
-nɔx,nach,33
-vɛɾdə,werden,46
-ziː,sie,29
-fɔr,der,36
-ɪʃ,ist,34
-hɛnt,haben,24
-viːɾ,wird,17
-tsuː,zu,23
-ɪnə,der,28
-ɪt,die,13
-tsʊm,zum,30
-biː,bei,16
-miːɾ,wir,28
-deːm,die,19
-diːɾ,die,24
-aʊ,auch,35
-dɛm,die,12
-iː,die,15
-meːɾ,wir,20
-aɪn,der,9
-miː,wir,12
-ziːn,die,12
-də,der,18
-ɛm,dem,9
-zoː,so,20
-fɔ,die,10
-ʊm,die,11
+Hochdeutsch,IPA_Dialekt,IPA_Gesamt_Häufigkeit,HD_Gesamt_Häufigkeit,Gemeinsame_Treffer,Kokkurrenz_Rate,PMI,Runde
+budget,byːtʃə,8,15,7,0.5,7.5906,1
+beiden,baɪdə,9,16,6,0.375,7.0056,2
+geschäft,gʃɛft,10,10,6,0.6,7.6837,3
+gemacht,gmaxt,10,14,6,0.4286,7.0463,4
+nie,niːɾ,8,14,5,0.3571,7.1052,5
+schweiz,ʃviːts,5,20,5,0.25,7.2687,6
+gilt,gɪlt,5,10,5,0.5,8.2687,7
+frau,fraʊ,5,8,5,0.625,8.5906,8
+aarau,ɑːraʊ,5,15,5,0.3333,7.6837,9
+weg,vɛk,6,11,5,0.4545,7.8681,10
+thema,teːmɑː,5,17,5,0.2941,7.5031,11
+schnell,ʃnɛl,6,11,5,0.4545,7.8681,12
+zudem,tsuːdɛm,5,11,4,0.3636,7.8092,13
+einmal,aɪmɑːl,4,14,4,0.2857,7.7832,14
+grossen,gɾoːsə,6,13,4,0.3077,7.3052,15
+genau,knaʊ,4,15,4,0.2667,7.6837,16
+frauen,fraʊə,4,15,4,0.2667,7.6837,17
+fall,fal,5,14,4,0.2857,7.4613,18
+stelle,ʃtɛl,6,10,4,0.4,7.6837,19
+liegt,liːt,6,16,4,0.25,7.0056,20
+nichts,nyːd,6,13,4,0.3077,7.3052,21
+bleiben,bliːbə,6,13,4,0.3077,7.3052,22
+konnte,kœnə,6,15,4,0.2667,7.0987,23

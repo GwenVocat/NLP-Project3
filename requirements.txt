@@ -17,6 +17,7 @@ num2words
 
 # Analyse & Visualisierung
 matplotlib
+seaborn
 wordcloud
 python-Levenshtein
 
@@ -25,3 +26,5 @@ protobuf
 
 # Notebooks
 jupyter
+
+
