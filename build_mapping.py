@@ -16,8 +16,8 @@ import pandas as pd
 
 MAX_PAIRS    = 400
 MIN_HITS     = 4      # mindestens N gemeinsame Treffer
-MIN_KOKKURRENZ = 0.25   # nur Paare über dieser Rate werden gespeichert
-MIN_PMI        = 7    # nur Paare mit positivem PMI (öfter als zufällig)
+MIN_KOKKURRENZ = 0.1   # nur Paare über dieser Rate werden gespeichert
+MIN_PMI        = 2    # nur Paare mit positivem PMI (öfter als zufällig)
 INPUT_CSV    = "Data/transcriptions_tenses.csv"
 OUTPUT_CSV   = "Data/ostschweiz_mapping_results.csv"
 
@@ -61,9 +61,10 @@ def compute_rates(
 
         for ipa_tok, hits in ipa_counts.items():
             if hits >= MIN_HITS:
-                rate  = hits / clip_count
-                pmi   = math.log2((hits * n_clips) / (clip_count * ipa_clip_counts[ipa_tok]))
-                pairs[(hd_word, ipa_tok)] = (clip_count, hits, rate, pmi)
+                rate      = hits / clip_count
+                inv_rate  = hits / ipa_clip_counts[ipa_tok]
+                pmi       = math.log2((hits * n_clips) / (clip_count * ipa_clip_counts[ipa_tok]))
+                pairs[(hd_word, ipa_tok)] = (clip_count, hits, rate, inv_rate, pmi)
 
     return pairs
 
@@ -93,14 +94,14 @@ def main():
 
     for runde in range(1, MAX_PAIRS + 1):
         pairs = compute_rates(hd_working, ipa_working, len(hd_working))
-        pairs = {k: v for k, v in pairs.items() if v[2] >= MIN_KOKKURRENZ and v[3] >= MIN_PMI}
+        pairs = {k: v for k, v in pairs.items() if v[2] >= MIN_KOKKURRENZ and v[3] >= MIN_KOKKURRENZ and v[4] >= MIN_PMI}
 
         if not pairs:
             print(f"Runde {runde}: keine Paare mehr gefunden – Abbruch.")
             break
 
         # Bestes Paar = meiste Hits (absolute Evidenz)
-        best_pair, (clip_count, hits, rate, pmi) = max(pairs.items(), key=lambda x: x[1][1])
+        best_pair, (clip_count, hits, rate, inv_rate, pmi) = max(pairs.items(), key=lambda x: x[1][1])
         hd_word, ipa_tok = best_pair
 
         results.append(
@@ -111,6 +112,7 @@ def main():
                 "HD_Gesamt_Häufigkeit":  corpus_freq[hd_word],
                 "Gemeinsame_Treffer":    hits,
                 "Kokkurrenz_Rate":       round(rate, 4),
+                "IPA_Kokkurrenz_Rate":   round(inv_rate, 4),
                 "PMI":                   round(pmi, 4),
                 "Runde":                 runde,
             }

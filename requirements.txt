@@ -17,6 +17,7 @@ num2words
 
 # Analyse & Visualisierung
 matplotlib
+matplotlib-venn
 seaborn
 wordcloud
 python-Levenshtein
