@@ -6,13 +6,14 @@ Optimierungen gegenüber transcribe.py:
   2. Phonemizer gebatcht am Schluss (2 Aufrufe statt ~7'000)
   3. Einzel-Clip-Inferenz auf MPS (stabil, kein Memory-Leak)
 
-Verwendung: python transcribe_fast.py
+Verwendung: .venv/bin/python src/01_transcription/transcribe.py
 """
 
 import gc
 import os
 import time
 import warnings
+from pathlib import Path
 
 import pandas as pd
 import librosa
@@ -29,10 +30,13 @@ warnings.filterwarnings("ignore", message=".*torch_dtype.*")
 # ============================================================
 # Konfiguration
 # ============================================================
-DATA_TSV   = "Data/test.tsv"
-CLIPS_DIR  = "Data/clips__test"
-OUTPUT_CSV = "Data/transcriptions.csv"
-ERRORS_CSV = "Data/errors.csv"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = PROJECT_ROOT / "Data"
+
+DATA_TSV   = DATA_DIR / "test.tsv"
+CLIPS_DIR  = DATA_DIR / "clips__test"
+OUTPUT_CSV = DATA_DIR / "transcriptions.csv"
+ERRORS_CSV = DATA_DIR / "errors.csv"
 
 MODEL_IPA_WHISPER   = "neurlang/ipa-whisper-base"
 MODEL_SWISS_WHISPER = "Flurin17/whisper-large-v3-turbo-swiss-german"
@@ -209,7 +213,8 @@ elapsed_total = time.time() - overall_start
 print(f"{'=' * 60}")
 print(f"Fertig!")
 print(f"   Erfolgreich: {len(results):,} / {len(df):,}")
-print(f"   Fehler:      {len(all_errors):,}  {'→ ' + ERRORS_CSV if all_errors else ''}")
+errors_msg = f"→ {ERRORS_CSV.relative_to(PROJECT_ROOT)}" if all_errors else ""
+print(f"   Fehler:      {len(all_errors):,}  {errors_msg}")
 print(f"   Dauer:       {elapsed_total / 60:.1f} Minuten")
-print(f"   Output:      {OUTPUT_CSV}")
+print(f"   Output:      {OUTPUT_CSV.relative_to(PROJECT_ROOT)}")
 print(f"{'=' * 60}")

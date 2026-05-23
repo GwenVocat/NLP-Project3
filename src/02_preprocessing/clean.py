@@ -12,19 +12,26 @@ Filterschritte:
   5. Repetitions-Erkennung: Muster von 2–6 Zeichen, ≥ 4× hintereinander → raus
   6. IPA-Normalisierung: ˈ ˌ entfernen, Whitespace normalisieren
 
-Verwendung: python clean.py
+Verwendung: .venv/bin/python src/02_preprocessing/clean.py
 """
 
 import re
 import unicodedata
 import os
+from pathlib import Path
+
 import pandas as pd
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = PROJECT_ROOT / "Data"
+INPUT_CSV = DATA_DIR / "transcriptions.csv"
+ERRORS_CSV = DATA_DIR / "errors.csv"
+OUTPUT_CSV = DATA_DIR / "transcriptions_clean.csv"
 
 # ============================================================
 # 1. Daten laden
 # ============================================================
-df = pd.read_csv("Data/transcriptions.csv")
+df = pd.read_csv(INPUT_CSV)
 n_start = len(df)
 print(f"Geladen: {n_start:,} Zeilen gesamt")
 
@@ -43,7 +50,7 @@ print(f"Nach Regionfilter (Ostschweiz): {n_after_region:,} Zeilen")
 # ============================================================
 # 3. errors.csv ausschliessen (falls vorhanden)
 # ============================================================
-errors_path = "Data/errors.csv"
+errors_path = ERRORS_CSV
 if os.path.exists(errors_path):
     errors = pd.read_csv(errors_path)
     before = len(df)
@@ -140,8 +147,8 @@ print(f"IPA normalisiert (ˈ ˌ  entfernt, Whitespace bereinigt)")
 # ============================================================
 # 8. Speichern
 # ============================================================
-df.to_csv("Data/transcriptions_clean.csv", index=False)
-print(f"\nGespeichert: Data/transcriptions_clean.csv")
+df.to_csv(OUTPUT_CSV, index=False)
+print(f"\nGespeichert: {OUTPUT_CSV.relative_to(PROJECT_ROOT)}")
 
 
 # ============================================================

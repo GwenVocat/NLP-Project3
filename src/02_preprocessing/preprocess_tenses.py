@@ -8,10 +8,15 @@ Zeiten: Präsens, Präteritum, Perfekt, Plusquamperfekt, Futur
 """
 
 import re
+from pathlib import Path
+
 import pandas as pd
 
-INPUT_CSV  = "Data/transcriptions_clean.csv"
-OUTPUT_ALL = "Data/transcriptions_tenses.csv"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = PROJECT_ROOT / "Data"
+
+INPUT_CSV = DATA_DIR / "transcriptions_clean.csv"
+OUTPUT_ALL = DATA_DIR / "transcriptions_tenses.csv"
 
 _SEIN_PRAET      = {"war", "waren", "warst", "wart"}
 _HABEN_PRAET     = {"hatte", "hatten", "hattest", "hattet"}
@@ -97,7 +102,7 @@ def main():
         print(f"  {tense:<18} {count:>5}  ({count/len(df)*100:.1f}%)")
 
     df.to_csv(OUTPUT_ALL, index=False)
-    print(f"\nAlle Sätze gespeichert: {OUTPUT_ALL}")
+    print(f"\nAlle Sätze gespeichert: {OUTPUT_ALL.relative_to(PROJECT_ROOT)}")
 
 
 

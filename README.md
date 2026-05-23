@@ -11,16 +11,20 @@ Forschungsfrag:
 Audio (mp3)
     │
     ▼
-transcribe.py         IPA-Whisper + Swiss-Whisper → transcriptions.csv
+src/01_transcription/transcribe.py
+                      IPA-Whisper + Swiss-Whisper → transcriptions.csv
     │
     ▼
-clean.py              Bereinigung & Filterung → transcriptions_clean.csv
+src/02_preprocessing/clean.py
+                      Bereinigung & Filterung → transcriptions_clean.csv
     │
     ▼
-classify.py           Kookkurrenz-Mapping IPA↔HD → ostschweiz_mapping_results.csv
+src/03_matching/build_mapping.py
+                      Greedy/PMI-Mapping → ostschweiz_mapping_results.csv
     │
     ▼
-annotate.py           Manuelle Ground-Truth-Annotation (Terminal)
+src/04_evaluation/annotate_mappings.py
+                      Manuelle Mapping-Annotation → annotation_candidates.csv
 ```
 
 ---
@@ -80,6 +84,25 @@ Kurze Referenz der häufigsten IPA-Zeichen im Schweizerdeutschen/Deutschen:
 
 ---
 
+## Ordnerstruktur
+
+```text
+src/
+├── 01_transcription/      Audio → Transkriptionen
+├── 02_preprocessing/      Cleaning, Normalisierung, Tempus-Erkennung
+├── 03_matching/           Matching-Methoden
+└── 04_evaluation/         Evaluation-Skripte
+
+notebooks/
+├── 01_raw_...             Rohdaten-/Whisper-Checks
+├── 02_preprocessing_...   Preprocessing-Analysen
+└── 03_matching_...        Matching- und Fehleranalysen
+
+Data/                      Eingabe-, Zwischen- und Ergebnisdateien
+```
+
+---
+
 ## Daten
 
 | Datei | Inhalt |
@@ -88,14 +111,13 @@ Kurze Referenz der häufigsten IPA-Zeichen im Schweizerdeutschen/Deutschen:
 | `Data/transcriptions.csv` | Rohe Whisper-Ausgaben (IPA + HD) |
 | `Data/transcriptions_clean.csv` | Bereinigtes Korpus (Ostschweiz, gefiltert) |
 | `Data/ostschweiz_mapping_results.csv` | Automatische IPA↔HD Kookkurrenz-Paare |
-| `Data/annotation_sentences.csv` | 200 zufällig gesampelte Sätze für Annotation |
-| `Data/annotation_results.csv` | Annotierte Ground-Truth-Einträge |
+| `Data/annotation_candidates.csv` | Eindeutige HD→IPA-Kandidaten für manuelle Evaluation |
 
 ---
 
 ## Skripte
 
-### `transcribe.py` – Audio → IPA + Hochdeutsch
+### `src/01_transcription/transcribe.py` – Audio → IPA + Hochdeutsch
 
 Transkribiert alle Ostschweizer Clips mit zwei Whisper-Modellen sequenziell
 (RAM-schonend: je Modell laden, transkribieren, entladen).
@@ -106,14 +128,14 @@ Transkribiert alle Ostschweizer Clips mit zwei Whisper-Modellen sequenziell
 - `espeak-ng` via `phonemizer` – Hochdeutsch-Text → IPA (Referenz)
 
 ```bash
-python transcribe.py
+.venv/bin/python src/01_transcription/transcribe.py
 ```
 
 Output: `Data/transcriptions.csv`, `Data/errors.csv`
 
 ---
 
-### `clean.py` – Datenbereinigung
+### `src/02_preprocessing/clean.py` – Datenbereinigung
 
 Filtert und normalisiert `transcriptions.csv` in mehreren Schritten:
 
@@ -125,59 +147,79 @@ Filtert und normalisiert `transcriptions.csv` in mehreren Schritten:
 6. IPA normalisieren (Stressmarker `ˈ ˌ` entfernen, Whitespace bereinigen)
 
 ```bash
-python clean.py
+.venv/bin/python src/02_preprocessing/clean.py
 ```
 
 Output: `Data/transcriptions_clean.csv`
 
 ---
 
-### `classify.py` – Kookkurrenz-Mapping
+### `src/03_matching/build_mapping.py` – greedy PMI-Mapping
 
-Analysiert alle Satzpaare (IPA-Audio ↔ Hochdeutsch) auf Wortebene.
-Ein IPA-Wort und ein HD-Wort werden gespeichert, wenn sie in ≥ 5 Sätzen
-gemeinsam auftreten (`MIN_HITS = 5`).
+Hauptmethode mit iterativem HD→IPA-Mapping über Kookkurrenz, beidseitige
+Rate und PMI.
 
 ```bash
-python classify.py
+.venv/bin/python src/03_matching/build_mapping.py
 ```
 
-Output: `Data/ostschweiz_mapping_results.csv`
+Output: `Data/ostschweiz_mapping_results.csv`, `Data/ostschweiz_remainder.csv`
 
-Spalten: `IPA_Dialekt`, `Hochdeutsch_Zuordnung`, `Gemeinsame_Treffer`
+### `src/03_matching/build_mapping_positional.py` – positionale Baseline
+
+Vergleicht HD- und IPA-Tokens an gleicher Position.
+
+```bash
+.venv/bin/python src/03_matching/build_mapping_positional.py
+```
+
+Output: `Data/ostschweiz_mapping_positional.csv`
+
+### `src/03_matching/build_mapping_ibm.py` – IBM/EM-Alignment
+
+Lernt `P(IPA | HD)` aus Satzpaaren mit EM und leichtem Positions-Prior.
+
+```bash
+.venv/bin/python src/03_matching/build_mapping_ibm.py
+```
+
+Output: `Data/ostschweiz_mapping_ibm.csv`
 
 ---
 
-### `annotate.py` – Manuelle Ground-Truth-Annotation
+### `src/04_evaluation/annotate_mappings.py` – Manuelle Mapping-Annotation
 
-Terminal-Tool zur wortweisen Annotation von IPA-Dialektwörtern mit
-ihrer korrekten Hochdeutsch-Entsprechung im Satzkontext.
+Terminal-Tool zur Annotation eindeutiger HD→IPA-Mapping-Paare. Gleiche Paare
+aus mehreren Methoden werden nur einmal annotiert und dann für alle beteiligten
+Methoden ausgewertet.
 
-**Beim ersten Start** werden automatisch:
-- 200 Sätze zufällig gesampelt (`random_state=42`) → `annotation_sentences.csv`
-- Leere `annotation_results.csv` angelegt
-- Fortschrittsdatei `annotation_progress.json` initialisiert
-
-**Fortschritt bleibt erhalten** – bei erneutem Start wird dort weitergemacht,
-wo aufgehört wurde.
+Kandidaten-Datei erstellen:
 
 ```bash
-python annotate.py
+.venv/bin/python src/04_evaluation/annotate_mappings.py --prepare
 ```
 
-**Befehle während der Annotation:**
+Interaktiv annotieren:
+
+```bash
+.venv/bin/python src/04_evaluation/annotate_mappings.py
+```
+
+Annotation zusammenfassen:
+
+```bash
+.venv/bin/python src/04_evaluation/annotate_mappings.py --summary
+```
 
 | Eingabe | Aktion |
 |---|---|
-| `Enter` | Auto-Mapping übernehmen (`auto_correct = True`) |
-| Text | Eigene HD-Übersetzung eingeben |
-| `s` | Dieses Wort überspringen |
-| `ss` | Ganzen Satz überspringen |
-| `q` | Sofort beenden (Fortschritt gespeichert) |
+| `1` | Mapping korrekt |
+| `0` | Mapping falsch |
+| `?` | Unsicher |
+| `s` | Kandidat überspringen |
+| `q` | Beenden |
 
-Output: `Data/annotation_results.csv`
-
-Spalten: `sentence_id`, `ipa_word`, `hd_ground_truth`, `auto_mapping`, `auto_correct`, `skipped`
+Output: `Data/annotation_candidates.csv`
 
 ---
 
@@ -193,6 +235,11 @@ pip install -r requirements.txt
 
 | Notebook | Zweck |
 |---|---|
-| `analysis.ipynb` | Explorative Analyse des Korpus und Mapping-Ergebnisse |
-| `check_ipa.ipynb` | Qualitätsprüfung der IPA-Transkriptionen |
-| `test_whisper_settings_ostschweiz.ipynb` | Experimente mit Whisper-Parametern |
+| `notebooks/01_raw_check_ipa.ipynb` | Qualitätsprüfung der IPA-Transkriptionen |
+| `notebooks/01_raw_test_whisper_settings_ostschweiz.ipynb` | Experimente mit Whisper-Parametern |
+| `notebooks/02_preprocessing_hd_wordfreq_analysis.ipynb` | Wortfrequenzen und Preprocessing-Checks |
+| `notebooks/03_matching_analysis.ipynb` | Explorative Analyse des Korpus und Mapping-Ergebnisse |
+| `notebooks/03_matching_comparison_mapping.ipynb` | Vergleich der Matching-Methoden |
+| `notebooks/03_matching_ibm_analysis.ipynb` | Auswertung des IBM/EM-Mappings |
+| `notebooks/03_matching_remainder_analysis.ipynb` | Analyse der nicht gemappten Tokens |
+| `notebooks/03_matching_unmatched_analysis.ipynb` | Analyse nicht gematchter HD-Wörter |

@@ -11,11 +11,15 @@ Output: Data/ostschweiz_mapping_positional.csv
 
 import re
 from collections import Counter
+from pathlib import Path
 
 import pandas as pd
 
-INPUT_CSV  = "Data/transcriptions_tenses.csv"
-OUTPUT_CSV = "Data/ostschweiz_mapping_positional.csv"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = PROJECT_ROOT / "Data"
+
+INPUT_CSV = DATA_DIR / "transcriptions_tenses.csv"
+OUTPUT_CSV = DATA_DIR / "ostschweiz_mapping_positional.csv"
 MIN_COUNT  = 2  # Paar muss mindestens N-mal positional übereinstimmen
 
 
@@ -66,7 +70,7 @@ def main():
 
     df_out = pd.DataFrame(records)
     df_out.to_csv(OUTPUT_CSV, index=False)
-    print(f"\n{len(df_out)} Paare (≥{MIN_COUNT}) gespeichert: {OUTPUT_CSV}")
+    print(f"\n{len(df_out)} Paare (≥{MIN_COUNT}) gespeichert: {OUTPUT_CSV.relative_to(PROJECT_ROOT)}")
     print(df_out.head(40).to_string(index=False))
 
 

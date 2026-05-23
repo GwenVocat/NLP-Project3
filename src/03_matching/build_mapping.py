@@ -11,15 +11,20 @@ Columns: Hochdeutsch, HD_Corpus_Frequency, IPA_Dialekt,
 import math
 import re
 from collections import Counter, defaultdict
+from pathlib import Path
 
 import pandas as pd
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = PROJECT_ROOT / "Data"
 
 MAX_PAIRS    = 400
 MIN_HITS     = 4      # mindestens N gemeinsame Treffer
 MIN_KOKKURRENZ = 0.1   # nur Paare über dieser Rate werden gespeichert
 MIN_PMI        = 2    # nur Paare mit positivem PMI (öfter als zufällig)
-INPUT_CSV    = "Data/transcriptions_tenses.csv"
-OUTPUT_CSV   = "Data/ostschweiz_mapping_results.csv"
+INPUT_CSV    = DATA_DIR / "transcriptions_tenses.csv"
+OUTPUT_CSV   = DATA_DIR / "ostschweiz_mapping_results.csv"
+REMAINDER_CSV = DATA_DIR / "ostschweiz_remainder.csv"
 
 
 def clean_hd(text: str) -> list[str]:
@@ -133,7 +138,7 @@ def main():
 
     df_out = pd.DataFrame(results)
     df_out.to_csv(OUTPUT_CSV, index=False)
-    print(f"\n{len(df_out)} Paare gespeichert: {OUTPUT_CSV}")
+    print(f"\n{len(df_out)} Paare gespeichert: {OUTPUT_CSV.relative_to(PROJECT_ROOT)}")
     print(df_out.to_string(index=False))
 
     # Remainder-Export: Sätze mit noch ungematchten Tokens
@@ -146,8 +151,8 @@ def main():
             remainder_rows.append(row)
 
     df_rem = pd.DataFrame(remainder_rows)
-    df_rem.to_csv("Data/ostschweiz_remainder.csv", index=False)
-    print(f"\n{len(df_rem)} Sätze mit Remainder gespeichert: Data/ostschweiz_remainder.csv")
+    df_rem.to_csv(REMAINDER_CSV, index=False)
+    print(f"\n{len(df_rem)} Sätze mit Remainder gespeichert: {REMAINDER_CSV.relative_to(PROJECT_ROOT)}")
 
 
 if __name__ == "__main__":

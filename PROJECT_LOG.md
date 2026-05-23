@@ -46,7 +46,7 @@ Audio-Clips
     
 Data/transcriptions_clean.csv
     │
-    └──► build_mapping.py
+    └──► src/03_matching/build_mapping.py
               │
               ├──► Data/ostschweiz_mapping_results.csv   (Haupt-Mapping-Output)
               └──► Data/ostschweiz_remainder.csv         (nicht gemappte Tokens)
@@ -63,7 +63,7 @@ Data/annotation_results.csv
 
 ---
 
-## 4. Kern-Skript: build_mapping.py
+## 4. Kern-Skript: src/03_matching/build_mapping.py
 
 ### Was es macht
 Erstellt automatisch ein HD→IPA-Mapping via **greedy iterativem Alignment**.
@@ -126,14 +126,30 @@ Ca. 23 Paare mit den aktuellen Schwellenwerten – alle linguistisch plausibel.
 
 ## 5. Weitere Skripte
 
-### transcribe.py
+### src/01_transcription/transcribe.py
 - Transkribiert Audio mit beiden Whisper-Modellen
 - Output: `Data/transcriptions_clean.csv`
 
-### clean.py
+### src/02_preprocessing/clean.py
 - Filtert fehlerhafte Transkriptionen (IPA-Zeichenratio-Threshold)
 - Entfernt Repetitionen
 - Normalisiert IPA (Stressmarker-Entfernung)
+
+### src/02_preprocessing/preprocess_sentences.py
+- Normalisiert Zahlen, Symbole und typografische Zeichen in HD-Sätzen
+- Output: `Data/transcriptions_normalized.csv`
+
+### src/02_preprocessing/preprocess_tenses.py
+- Klassifiziert HD-Sätze nach Tempus
+- Output: `Data/transcriptions_tenses.csv`
+
+### src/03_matching/build_mapping_positional.py
+- Positionale Baseline: HD-Token und IPA-Token an gleicher Position
+- Output: `Data/ostschweiz_mapping_positional.csv`
+
+### src/03_matching/build_mapping_ibm.py
+- IBM-Model-1/EM-Alignment mit Positions-Prior
+- Output: `Data/ostschweiz_mapping_ibm.csv`
 
 ### annotate.py
 - Terminal-basiertes Annotationstool
@@ -148,7 +164,7 @@ Ca. 23 Paare mit den aktuellen Schwellenwerten – alle linguistisch plausibel.
 - Berechnet Precision, Recall (und ggf. MRR) auf mittelhäufigen Wörtern
 - Ist der Kern der Forschungsfrage – ohne dieses Skript gibt es kein Resultat für das Paper
 
-### analysis_remainder.ipynb
+### notebooks/03_matching_remainder_analysis.ipynb
 - Jupyter Notebook zur Analyse der nicht gemappten Tokens
 - Untersucht: Tempus-Verteilung, Wortposition im Satz, Muster bei ungemappten HD- und IPA-Tokens
 - Input: `Data/ostschweiz_remainder.csv`
@@ -157,7 +173,7 @@ Ca. 23 Paare mit den aktuellen Schwellenwerten – alle linguistisch plausibel.
 
 ## 6. Remainder-Export (Data/ostschweiz_remainder.csv)
 
-`build_mapping.py` exportiert am Ende zusätzlich alle Sätze **mit den gemappten Tokens entfernt**.
+`src/03_matching/build_mapping.py` exportiert am Ende zusätzlich alle Sätze **mit den gemappten Tokens entfernt**.
 Struktur identisch zu `transcriptions_tenses.csv`:
 `path, dialect_region, sentence, ipa_reference, ipa_audio, ipa_swiss_whisper, tense`
 – aber HD- und IPA-Tokens die bereits gemappt wurden, sind aus den Sätzen entfernt.
@@ -180,9 +196,9 @@ Diese Entscheidungen wurden bewusst getroffen und sollen **nicht** umgangen werd
 
 ## 8. Offene Aufgaben (Stand Mai 2026)
 
-- [ ] `eval.py` schreiben (Precision, Recall auf `annotation_results.csv`)
+- [ ] `src/04_evaluation/eval.py` schreiben (Precision, Recall auf `annotation_results.csv`)
 - [ ] Annotation auf ~200 Sätze vervollständigen (`annotate.py`)
-- [ ] `analysis_remainder.ipynb` vervollständigen (Muster im Remainder)
+- [ ] `notebooks/03_matching_remainder_analysis.ipynb` vervollständigen (Muster im Remainder)
 - [ ] Final Paper schreiben (ACL-Format, max. 4 Seiten, Deadline 15. Juni 2026)
 
 ---
@@ -191,16 +207,33 @@ Diese Entscheidungen wurden bewusst getroffen und sollen **nicht** umgangen werd
 
 ```
 NLP-Project3/
-├── build_mapping.py              ← Haupt-Mapping-Skript
-├── annotate.py                   ← Annotationstool
-├── transcribe.py                 ← Audio-Transkription
-├── clean.py                      ← Daten-Cleaning
-├── eval.py                       ← (noch zu schreiben)
-├── analysis_remainder.ipynb      ← Remainder-Analyse
+├── src/
+│   ├── 01_transcription/
+│   │   └── transcribe.py
+│   ├── 02_preprocessing/
+│   │   ├── clean.py
+│   │   ├── preprocess_sentences.py
+│   │   └── preprocess_tenses.py
+│   ├── 03_matching/
+│   │   ├── build_mapping.py
+│   │   ├── build_mapping_positional.py
+│   │   └── build_mapping_ibm.py
+│   └── 04_evaluation/
+├── notebooks/
+│   ├── 01_raw_check_ipa.ipynb
+│   ├── 01_raw_test_whisper_settings_ostschweiz.ipynb
+│   ├── 02_preprocessing_hd_wordfreq_analysis.ipynb
+│   ├── 03_matching_analysis.ipynb
+│   ├── 03_matching_comparison_mapping.ipynb
+│   ├── 03_matching_ibm_analysis.ipynb
+│   ├── 03_matching_remainder_analysis.ipynb
+│   └── 03_matching_unmatched_analysis.ipynb
 ├── Data/
 │   ├── transcriptions_clean.csv
 │   ├── transcriptions_tenses.csv
 │   ├── ostschweiz_mapping_results.csv
+│   ├── ostschweiz_mapping_positional.csv
+│   ├── ostschweiz_mapping_ibm.csv
 │   ├── ostschweiz_remainder.csv
 │   ├── annotation_sentences.csv
 │   └── annotation_results.csv

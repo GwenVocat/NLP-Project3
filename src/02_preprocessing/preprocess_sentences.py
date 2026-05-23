@@ -6,11 +6,16 @@
 """
 
 import re
+from pathlib import Path
+
 import pandas as pd
 from num2words import num2words
 
-INPUT  = "Data/transcriptions_clean.csv"
-OUTPUT = "Data/transcriptions_normalized.csv"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = PROJECT_ROOT / "Data"
+
+INPUT = DATA_DIR / "transcriptions_clean.csv"
+OUTPUT = DATA_DIR / "transcriptions_normalized.csv"
 
 
 def _card(n: int) -> str:
@@ -106,7 +111,7 @@ def main():
         print()
 
     df.to_csv(OUTPUT, index=False)
-    print(f"  Gespeichert → {OUTPUT}")
+    print(f"  Gespeichert → {OUTPUT.relative_to(PROJECT_ROOT)}")
 
 
 if __name__ == "__main__":
