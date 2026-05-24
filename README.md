@@ -1,7 +1,7 @@
 # NLP Project 3 – Ostschweizer Dialekt-Mapping
 
-Forschungsfrag:
-«Wie gut lässt sich der dialektspezifische Wortschatz des Ostschweizer Dialekts automatisch hochdeutschen Äquivalenten zuordnen – gemessen an Wörtern mittlerer Häufigkeit?»
+Forschungsfrage:
+«Wie gut lassen sich automatisch erzeugte IPA-Transkriptionen des Ostschweizer Dialekts hochdeutschen Wörtern zuordnen?»
 
 ---
 
@@ -111,6 +111,7 @@ Data/                      Eingabe-, Zwischen- und Ergebnisdateien
 | `Data/transcriptions.csv` | Rohe Whisper-Ausgaben (IPA + HD) |
 | `Data/transcriptions_clean.csv` | Bereinigtes Korpus (Ostschweiz, gefiltert) |
 | `Data/ostschweiz_mapping_results.csv` | Automatische IPA↔HD Kookkurrenz-Paare |
+| `Data/ostschweiz_mapping_phrases.csv` | Phrase-Level HD→IPA n-gram Mapping |
 | `Data/annotation_candidates.csv` | Eindeutige HD→IPA-Kandidaten für manuelle Evaluation |
 
 ---
@@ -119,8 +120,7 @@ Data/                      Eingabe-, Zwischen- und Ergebnisdateien
 
 ### `src/01_transcription/transcribe.py` – Audio → IPA + Hochdeutsch
 
-Transkribiert alle Ostschweizer Clips mit zwei Whisper-Modellen sequenziell
-(RAM-schonend: je Modell laden, transkribieren, entladen).
+Transkribiert alle Ostschweizer Clips mit zwei Whisper-Modellen sequenziell (RAM-schonend: je Modell laden, transkribieren, entladen).
 
 **Modelle:**
 - [`neurlang/ipa-whisper-base`](https://huggingface.co/neurlang/ipa-whisper-base) – Audio direkt → IPA
@@ -185,6 +185,18 @@ Lernt `P(IPA | HD)` aus Satzpaaren mit EM und leichtem Positions-Prior.
 
 Output: `Data/ostschweiz_mapping_ibm.csv`
 
+### `src/03_matching/build_mapping_phrases.py` – Phrase-/n-gram-Mapping
+
+Vergleicht HD-n-grams und IPA-n-grams der Länge 1 bis 3 an ähnlicher
+Satzposition. Diese explorative Methode soll Mehrwort- und Kontraktionsfälle
+finden, z.B. `gibt es -> gits`.
+
+```bash
+.venv/bin/python src/03_matching/build_mapping_phrases.py
+```
+
+Output: `Data/ostschweiz_mapping_phrases.csv`
+
 ---
 
 ### `src/04_evaluation/annotate_mappings.py` – Manuelle Mapping-Annotation
@@ -221,6 +233,20 @@ Annotation zusammenfassen:
 
 Output: `Data/annotation_candidates.csv`
 
+### `src/04_evaluation/evaluate_annotations.py` – Evaluationszahlen
+
+Berechnet aus der manuellen Annotation Precision und Coverage pro Methode
+sowie eine Konsens-Auswertung.
+
+```bash
+.venv/bin/python src/04_evaluation/evaluate_annotations.py
+```
+
+Output:
+- `Data/evaluation_method_summary.csv`
+- `Data/evaluation_consensus_summary.csv`
+- `Data/evaluation_error_examples.csv`
+
 ---
 
 ## Installation
@@ -240,6 +266,21 @@ pip install -r requirements.txt
 | `notebooks/02_preprocessing_hd_wordfreq_analysis.ipynb` | Wortfrequenzen und Preprocessing-Checks |
 | `notebooks/03_matching_analysis.ipynb` | Explorative Analyse des Korpus und Mapping-Ergebnisse |
 | `notebooks/03_matching_comparison_mapping.ipynb` | Vergleich der Matching-Methoden |
+| `notebooks/03_matching_phrase_analysis.ipynb` | Analyse der Phrase-/n-gram-Mapping-Kandidaten |
 | `notebooks/03_matching_ibm_analysis.ipynb` | Auswertung des IBM/EM-Mappings |
 | `notebooks/03_matching_remainder_analysis.ipynb` | Analyse der nicht gemappten Tokens |
 | `notebooks/03_matching_unmatched_analysis.ipynb` | Analyse nicht gematchter HD-Wörter |
+| `notebooks/04_evaluation_annotation_analysis.ipynb` | Finale Auswertung der manuellen Annotation |
+
+---
+
+## Paper
+
+Erster Manuskript-Draft:
+
+```text
+paper/paper_draft.md
+```
+
+Der Draft ist auf einen ACL-style Short Paper Aufbau ausgelegt
+(max. 4 Seiten plus Referenzen/Figuren).

@@ -1,0 +1,7 @@
+method_count,methods,total,judged,correct,wrong,unclear,precision_excluding_unclear
+3,"greedy, positional, ibm",71,70,69,1,1,0.9857142857142858
+2,"greedy, ibm",41,38,32,6,3,0.8421052631578947
+2,"positional, ibm",19,19,17,2,0,0.8947368421052632
+1,positional,95,89,65,24,6,0.7303370786516854
+1,ibm,12,9,6,3,3,0.6666666666666666
+1,greedy,3,2,1,1,1,0.5
