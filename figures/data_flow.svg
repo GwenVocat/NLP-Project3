@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580" height="800" viewBox="0 0 580 800">
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0,0 9,3.5 0,7" fill="#4a5568"/>
+    </marker>
+    <marker id="ap" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0,0 9,3.5 0,7" fill="#b07a18"/>
+    </marker>
+  </defs>
+
+  <rect width="580" height="800" fill="#ffffff"/>
+
+  <!-- ── CORPUS ── -->
+  <rect x="30" y="20" width="520" height="56" rx="8" fill="#1e3a5f"/>
+  <text x="290" y="46" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="15" font-weight="700" fill="#ffffff">Mozilla Common Voice STT4SG-350</text>
+  <text x="290" y="65" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12" fill="rgba(255,255,255,0.82)">Ostschweiz subset · 3,084 clips</text>
+
+  <line x1="290" y1="76" x2="290" y2="104" stroke="#4a5568" stroke-width="1.8" marker-end="url(#a)"/>
+
+  <!-- ── INPUTS ── -->
+  <rect x="30" y="106" width="520" height="88" rx="10" fill="#f7f9fc" stroke="#c8d5e0" stroke-width="1.2"/>
+  <text x="52" y="122" font-family="Helvetica Neue,Arial,sans-serif" font-size="8.5" font-weight="700" fill="#8a9ab5" letter-spacing="1.2">INPUT PER CLIP</text>
+  <rect x="68" y="128" width="178" height="40" rx="7" fill="#1a5c42"/>
+  <text x="157" y="153" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13" font-weight="600" fill="#ffffff">dialect audio</text>
+  <rect x="334" y="128" width="178" height="40" rx="7" fill="#1a5c42"/>
+  <text x="423" y="153" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13" font-weight="600" fill="#ffffff">HD sentence</text>
+
+  <!-- audio → ipa_audio -->
+  <line x1="157" y1="168" x2="157" y2="200" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="157" y1="200" x2="116" y2="248" stroke="#4a5568" stroke-width="1.5" marker-end="url(#a)"/>
+  <!-- HD → ipa_reference -->
+  <line x1="423" y1="168" x2="423" y2="200" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="423" y1="200" x2="290" y2="248" stroke="#4a5568" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- ── TRANSCRIPTION ── -->
+  <rect x="20" y="224" width="540" height="140" rx="10" fill="#f7f9fc" stroke="#c8d5e0" stroke-width="1.2"/>
+  <text x="42" y="241" font-family="Helvetica Neue,Arial,sans-serif" font-size="8.5" font-weight="700" fill="#8a9ab5" letter-spacing="1.2">AUTOMATIC TRANSCRIPTION</text>
+
+  <rect x="40" y="248" width="152" height="72" rx="7" fill="#1e4a8a"/>
+  <text x="116" y="275" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13.5" font-weight="700" fill="#ffffff">ipa_audio</text>
+  <text x="116" y="295" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11.5" fill="rgba(255,255,255,0.88)">audio → IPA</text>
+  <text x="116" y="312" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="10" fill="rgba(255,255,255,0.70)">matching target</text>
+
+  <rect x="214" y="248" width="152" height="72" rx="7" fill="#4a5568"/>
+  <text x="290" y="275" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13.5" font-weight="700" fill="#ffffff">ipa_reference</text>
+  <text x="290" y="295" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11.5" fill="rgba(255,255,255,0.88)">HD → IPA</text>
+  <text x="290" y="312" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="10" fill="rgba(255,255,255,0.70)">annotation context</text>
+
+  <rect x="388" y="248" width="152" height="72" rx="7" fill="#b0b8c4"/>
+  <text x="464" y="273" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13" font-weight="600" fill="#ffffff">Swiss ASR</text>
+  <text x="464" y="292" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.88)">audio → HD</text>
+  <text x="464" y="310" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="10" fill="rgba(255,255,255,0.70)">not used</text>
+
+  <!-- ipa_audio + ipa_reference → merge → CSV -->
+  <line x1="116" y1="320" x2="116" y2="354" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="290" y1="320" x2="290" y2="354" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="116" y1="354" x2="290" y2="354" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="203" y1="354" x2="203" y2="374" stroke="#4a5568" stroke-width="1.8" marker-end="url(#a)"/>
+
+  <!-- ── TRANSCRIPTIONS.CSV ── -->
+  <rect x="90" y="376" width="400" height="36" rx="7" fill="#1a5c42"/>
+  <text x="290" y="400" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13" font-weight="600" fill="#ffffff">transcriptions.csv</text>
+
+  <line x1="290" y1="412" x2="290" y2="440" stroke="#4a5568" stroke-width="1.8" marker-end="url(#a)"/>
+
+  <!-- ── CLEANING ── -->
+  <rect x="40" y="442" width="500" height="64" rx="8" fill="#1a5c42"/>
+  <text x="290" y="467" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="14" font-weight="700" fill="#ffffff">Cleaning &amp; IPA normalisation</text>
+  <text x="290" y="488" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.80)">errors · short outputs · garbled IPA · repetitions · stress marks</text>
+
+  <line x1="290" y1="506" x2="290" y2="536" stroke="#4a5568" stroke-width="1.8" marker-end="url(#a)"/>
+
+  <!-- ── ALIGNMENT METHODS ── -->
+  <rect x="20" y="538" width="540" height="132" rx="10" fill="#f7f9fc" stroke="#c8d5e0" stroke-width="1.2"/>
+  <text x="42" y="556" font-family="Helvetica Neue,Arial,sans-serif" font-size="8.5" font-weight="700" fill="#8a9ab5" letter-spacing="1.2">ALIGNMENT METHODS</text>
+
+  <rect x="43" y="562" width="110" height="52" rx="7" fill="#1a4f7a"/>
+  <text x="98" y="585" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12.5" font-weight="600" fill="#ffffff">Greedy</text>
+  <text x="98" y="603" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.85)">PMI</text>
+
+  <rect x="171" y="562" width="110" height="52" rx="7" fill="#1a4f7a"/>
+  <text x="226" y="585" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12.5" font-weight="600" fill="#ffffff">Positional</text>
+  <text x="226" y="603" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.85)">baseline</text>
+
+  <rect x="299" y="562" width="110" height="52" rx="7" fill="#1a4f7a"/>
+  <text x="354" y="585" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12.5" font-weight="600" fill="#ffffff">IBM / EM</text>
+  <text x="354" y="603" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.85)">Model 1</text>
+
+  <rect x="427" y="562" width="110" height="52" rx="7" fill="#fef8ee" stroke="#b07a18" stroke-width="1.8" stroke-dasharray="5,3"/>
+  <text x="482" y="585" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="12.5" font-weight="600" fill="#8b6114">Phrase</text>
+  <text x="482" y="603" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11" fill="#8b6114">n-grams</text>
+
+  <!-- 3 main methods → merge → eval -->
+  <line x1="98"  y1="614" x2="98"  y2="654" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="226" y1="614" x2="226" y2="654" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="354" y1="614" x2="354" y2="654" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="98"  y1="654" x2="354" y2="654" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="226" y1="654" x2="226" y2="700" stroke="#4a5568" stroke-width="1.8" marker-end="url(#a)"/>
+
+  <!-- Phrase dashed → eval -->
+  <line x1="482" y1="614" x2="482" y2="700" stroke="#b07a18" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#ap)"/>
+
+  <!-- ── EVALUATION ── -->
+  <rect x="60" y="702" width="460" height="60" rx="8" fill="#1b5e20"/>
+  <text x="290" y="728" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="14" font-weight="700" fill="#ffffff">Evaluation &amp; Analysis</text>
+  <text x="290" y="748" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="11" fill="rgba(255,255,255,0.80)">word-level precision / coverage · phrase examples</text>
+
+  <text x="290" y="782" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="10" fill="#9ca3af">Dashed: context-only or qualitative extension (Phrase n-grams).</text>
+</svg>
